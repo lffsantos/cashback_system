@@ -100,6 +100,8 @@ REST_FRAMEWORK = {
     ]
 }
 
+AUTH_USER_MODEL = 'core.CashBackUser'
+
 #############################
 # django-rest-framework-JWT #
 #############################
