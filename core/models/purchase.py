@@ -1,7 +1,6 @@
 import datetime
 
 from django.db import models
-from django.utils import timezone
 
 
 class Purchase(models.Model):
@@ -38,7 +37,7 @@ class Purchase(models.Model):
         super(Purchase, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.purchase_code}'
+        return f'{self.purchase_code} - {self.get_status_display()}'
 
     class Meta:
         verbose_name = 'Compra'
