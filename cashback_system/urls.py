@@ -21,6 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api/', include('core.urls')),
-    path('login/', obtain_jwt_token),
-    path('refresh-token/', refresh_jwt_token),
+    path('login/', obtain_jwt_token, name='obtain_token'),
+    path('refresh-token/', refresh_jwt_token, name='refresh_token'),
 ]

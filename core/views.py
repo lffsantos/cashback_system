@@ -1,6 +1,8 @@
 import requests
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.exceptions import NotAcceptable
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -28,11 +30,15 @@ class PurchaseViewSet(viewsets.ModelViewSet):
     queryset = Purchase.objects.all()
 
     def get_queryset(self):
-        return Purchase.objects.filter(dealer=self.request.user.dealer)
+        try:
+            dealer = self.request.user.dealer
+        except ObjectDoesNotExist:
+            raise NotAcceptable(detail="Usuário não é um revendedor")
+        return Purchase.objects.filter(dealer=dealer)
 
 
 class AcumulatedCashbackDealerViewSet(APIView):
-    authentication_classes = [JSONWebTokenAuthentication, SessionAuthentication]
+    authentication_classes = [JSONWebTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):

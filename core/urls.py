@@ -5,8 +5,8 @@ from core.views import PurchaseViewSet, DealerRegisterViewSet, AcumulatedCashbac
 app_name = 'core'
 
 router = DefaultRouter()
-router.register(r'dealer', DealerRegisterViewSet)
-router.register(r'purchase', PurchaseViewSet)
+router.register(r'dealer', DealerRegisterViewSet, 'dealer')
+router.register(r'purchase', PurchaseViewSet, 'purchase')
 
 
 urlpatterns = router.urls
