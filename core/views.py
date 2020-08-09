@@ -27,6 +27,9 @@ class PurchaseViewSet(viewsets.ModelViewSet):
     serializer_class = PurchaseSerializer
     queryset = Purchase.objects.all()
 
+    def get_queryset(self):
+        return Purchase.objects.filter(dealer=self.request.user.dealer)
+
 
 class AcumulatedCashbackDealerViewSet(APIView):
     authentication_classes = [JSONWebTokenAuthentication, SessionAuthentication]

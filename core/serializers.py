@@ -25,16 +25,15 @@ class PurchaseSerializer(serializers.ModelSerializer):
         source='get_status_display',
         read_only=True
     )
-    #
-    # def validate_cpf(self, cpf):
-    #     if cpf != self.context['request'].user.dealer.cpf:
-    #         raise serializers.ValidationError("CPF do revendedor incorreto!")
-    #
-    #     return cpf
+
+    def validate_cpf(self, cpf):
+        if cpf != self.context['request'].user.dealer.cpf:
+            raise serializers.ValidationError("CPF do revendedor incorreto!")
+
+        return cpf
 
     def create(self, validated_data):
         cpf = validated_data.pop('cpf')
-        # dealer = self.context['request'].user.dealer
         validated_data['status'] = Purchase.APRROVED if cpf in APRROVED_CPFS else Purchase.IN_VALIDATION
         dealer = Dealer.objects.get(cpf=cpf)
         purchase = Purchase.objects.create(dealer=dealer, **validated_data)
