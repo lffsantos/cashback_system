@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from cashback_system.settings import APRROVED_CPFS
 from core.models import Dealer, Purchase
+from core.validators import validate_cpf
 
 
 class DealerSerializer(serializers.ModelSerializer):
@@ -25,7 +26,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
     )
 
     def create(self, validated_data):
-        cpf = self.context['request'].user.dealer.cpf
+        cpf = validated_data.pop('cpf')
         validated_data['status'] = Purchase.APRROVED if cpf in APRROVED_CPFS else Purchase.IN_VALIDATION
         dealer = Dealer.objects.get(cpf=cpf)
         purchase = Purchase.objects.create(dealer=dealer, **validated_data)

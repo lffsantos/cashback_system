@@ -29,7 +29,19 @@ class PurchaseViewSet(viewsets.ModelViewSet):
     serializer_class = PurchaseSerializer
     queryset = Purchase.objects.all()
 
+    def perform_create(self, serializer):
+        data = self.request.POST.copy()
+        data['cpf'] = self.request.user.dealer.cpf
+        if serializer.is_valid():
+            serializer.create(data.dict())
+            return True
+
+        return False
+
     def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Purchase.objects.all()
+
         try:
             dealer = self.request.user.dealer
         except ObjectDoesNotExist:

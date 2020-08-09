@@ -3,11 +3,16 @@ import json
 from unittest import TestCase
 
 import pytest
+from django.contrib.auth import get_user_model
 from django.urls import reverse
+from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APIClient
+from rest_framework_jwt.settings import api_settings
 
-from core.models import Dealer
+from core.models import Dealer, dealer
+
+User = get_user_model()
 
 
 @pytest.mark.django_db(transaction=True)
@@ -59,6 +64,32 @@ class RestApiTest(TestCase):
         }
         response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    # Lista todas as compras quando o usuário autenticado é admin
+    def test_list_purchase_admin_user(self):
+        self.dealer1 = baker.make('Dealer', cpf='55320468083')
+        self.user = baker.make('CashBackUser', email="testex@gmail.com", is_superuser=True)
+        baker.make('Purchase', dealer=self.dealer1)
+        baker.make('Purchase', dealer=self.dealer)
+        self.jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        self.jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        payload = self.jwt_payload_handler(self.user)
+        auth = f'JWT {self.jwt_encode_handler(payload)}'
+        url = reverse('core:purchase-list')
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+
+    # Lista somente as compras do usuário autenticado
+    def test_list_purchase_dealer_user(self):
+        self.dealer1 = baker.make('Dealer', cpf='55320468083')
+        baker.make('Purchase', dealer=self.dealer1)
+        baker.make('Purchase', dealer=self.dealer)
+        url = reverse('core:purchase-list')
+        auth = f'JWT {self.token}'
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
 
     # Cashback acumulado
     def test_get_acumulated_cashback(self):

@@ -30,7 +30,7 @@ class DealerSerializerTest(TestCase):
 class PurchaseSerializerTest(TestCase):
     def test_create_purchase(self):
         self.dealer = baker.make('Dealer', cpf='55320468083')
-        payload = {"purchase_code": "code1", "value": 1000}
+        payload = {"purchase_code": "code1", "value": 1000, "cpf": '55320468083'}
         client = Client()
         response = client.get("")
         request = response.wsgi_request
@@ -48,7 +48,7 @@ class PurchaseSerializerTest(TestCase):
 
     def test_create_purchase_approve_cpf(self):
         self.dealer = baker.make('Dealer', cpf='15350946056')
-        payload = {"purchase_code": "code1", "value": 1000}
+        payload = {"purchase_code": "code1", "value": 1000, "cpf": '15350946056'}
         client = Client()
         response = client.get("")
         request = response.wsgi_request
