@@ -8,3 +8,7 @@ __pycache__/
 .idea
 .baseservice
 .env.prod
+
+static
+.coverage
+.coveragerc
