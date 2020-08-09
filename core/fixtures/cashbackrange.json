@@ -1,0 +1,29 @@
+[
+{
+  "model": "core.cashbackrange",
+  "pk": 1,
+  "fields": {
+    "min": "0.00",
+    "max": "1000.00",
+    "percentage": "10.00"
+  }
+},
+{
+  "model": "core.cashbackrange",
+  "pk": 2,
+  "fields": {
+    "min": "1000.00",
+    "max": "1500.00",
+    "percentage": "15.00"
+  }
+},
+{
+  "model": "core.cashbackrange",
+  "pk": 3,
+  "fields": {
+    "min": "1500.00",
+    "max": "999999.00",
+    "percentage": "20.00"
+  }
+}
+]
