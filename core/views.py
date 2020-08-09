@@ -2,7 +2,7 @@ import requests
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.exceptions import NotAcceptable
+from rest_framework.exceptions import NotAcceptable, ValidationError
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response

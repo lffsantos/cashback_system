@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.utils import timezone
 
@@ -14,7 +16,7 @@ class Purchase(models.Model):
 
     value = models.DecimalField('Valor da Compra', max_digits=19, decimal_places=2, null=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=IN_VALIDATION,)
-    purchase_at = models.DateField(default=timezone.now)
+    purchase_at = models.DateField(default=datetime.date.today)
     created_at = models.DateTimeField('Criado em', auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True)
     cashback_percentage = models.DecimalField('Percentual do cashback', max_digits=12, decimal_places=2, default=0)

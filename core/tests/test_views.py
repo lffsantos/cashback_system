@@ -1,3 +1,4 @@
+import datetime
 import json
 from unittest import TestCase
 
@@ -43,8 +44,7 @@ class RestApiTest(TestCase):
         data = {
             "purchase_code": "code 1",
             "value": 900,
-            "purchase_at": "2020-08-08",
-            "cpf": self.dealer.cpf
+            'purchase_at': str(datetime.date.today()),
         }
         response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -55,21 +55,7 @@ class RestApiTest(TestCase):
         auth = f'JWT {self.token}'
         data = {
             "value": 900,
-            "purchase_at": "2020-08-08",
-            "cpf": self.dealer.cpf
-        }
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    # Cadastrar uma compra de compra passando cpf diferente do usuário autenticado
-    def test_create_purchase_cpf_diff_logged_user(self):
-        url = reverse('core:purchase-list')
-        auth = f'JWT {self.token}'
-        data = {
-            "purchase_code": "code 1",
-            "value": 900,
-            "purchase_at": "2020-08-08",
-            "cpf": "35767856044"
+            'purchase_at': str(datetime.date.today()),
         }
         response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
