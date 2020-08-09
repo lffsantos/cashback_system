@@ -1,7 +1,10 @@
+import requests
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
@@ -23,3 +26,14 @@ class PurchaseViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = PurchaseSerializer
     queryset = Purchase.objects.all()
+
+
+class AcumulatedCashbackDealerViewSet(APIView):
+    authentication_classes = [JSONWebTokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        url = 'https://mdaqk8ek5j.execute-api.us-east-1.amazonaws.com/v1/cashback?cpf=12312312323'
+        headers = {'token': 'ZXPURQOARHiMc6Y0flhRC1LVlZQVFRnm'}
+        results = requests.get(url=url, headers=headers).json()
+        return Response(results)
