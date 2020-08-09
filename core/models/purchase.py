@@ -10,7 +10,7 @@ class Purchase(models.Model):
         (APRROVED, 'Aprovado'),
     ]
     dealer = models.ForeignKey('Dealer', on_delete=models.PROTECT, related_name="purchase")
-    purchase_code = models.CharField('Código da Compra', max_length=100, unique=True, null=False)
+    purchase_code = models.CharField('Código da Compra', max_length=100)
 
     value = models.DecimalField('Valor da Compra', max_digits=19, decimal_places=2, null=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=IN_VALIDATION,)
@@ -19,6 +19,21 @@ class Purchase(models.Model):
     updated_at = models.DateTimeField('Atualizado em', auto_now=True)
     cashback_percentage = models.DecimalField('Percentual do cashback', max_digits=12, decimal_places=2, default=0)
     cashback_value = models.DecimalField(verbose_name='Valor do Cashback', max_digits=12, decimal_places=2, default=0)
+
+    @staticmethod
+    def get_cashback(value):
+        from core.models import CashbackRange
+        range = CashbackRange.objects.filter(min__lt=value).last()
+        if not range:
+            return 0, 0
+
+        percentage = range.percentage
+        value = (value * percentage) / 100
+        return percentage, value
+
+    def save(self, *args, **kwargs):
+        self.cashback_percentage, self.cashback_value = Purchase.get_cashback(self.value)
+        super(Purchase, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.purchase_code}'
