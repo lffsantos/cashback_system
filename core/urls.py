@@ -6,5 +6,5 @@ app_name = 'core'
 
 router = DefaultRouter()
 router.register(r'dealer', DealerRegisterViewSet)
-router.register(r'purcharse', PurchaseViewSet)
+router.register(r'purchase', PurchaseViewSet)
 urlpatterns = router.urls

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from cashback_system.settings import APRROVED_CPFS
 from core.models import Dealer, Purchase
 from core.validators import validate_cpf, validate_dealer
 
@@ -19,16 +20,27 @@ class DealerSerializer(serializers.ModelSerializer):
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
-    purchase_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", help_text='YYYY-MM-DD h:m:s')
-    cpf = serializers.CharField(validators=[validate_cpf, validate_dealer], max_length=11, min_length=11)
+    cpf = serializers.CharField(write_only=True, validators=[validate_cpf, validate_dealer], max_length=11, min_length=11)
+    status = serializers.CharField(
+        source='get_status_display',
+        read_only=True
+    )
+    #
+    # def validate_cpf(self, cpf):
+    #     if cpf != self.context['request'].user.dealer.cpf:
+    #         raise serializers.ValidationError("CPF do revendedor incorreto!")
+    #
+    #     return cpf
 
     def create(self, validated_data):
         cpf = validated_data.pop('cpf')
+        # dealer = self.context['request'].user.dealer
+        validated_data['status'] = Purchase.APRROVED if cpf in APRROVED_CPFS else Purchase.IN_VALIDATION
         dealer = Dealer.objects.get(cpf=cpf)
         purchase = Purchase.objects.create(dealer=dealer, **validated_data)
         return purchase
 
     class Meta:
         model = Purchase
-        fields = ('purchase_code', 'value', 'purchase_at', 'cpf')
+        fields = ('purchase_code', 'value', 'purchase_at', 'cpf', 'status', 'cashback_percentage', 'cashback_value')
 
