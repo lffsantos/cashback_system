@@ -24,8 +24,11 @@ Carregando dados
 
 
 ## Descrição da API - REST:
-[https://documenter.getpostman.com/view/998888/T1LJm9QG?version=latest](Documentação da API)
+[Documentação da API](https://documenter.getpostman.com/view/998888/T1LJm9QG?version=latest)
 
-## API DEMO - Heroku
-[https://cashback-dealer.herokuapp.com/](https://cashback-dealer.herokuapp.com/)
+## API DEMO - EndPoints
+https://cashback-dealer.herokuapp.com/api/dealer/  
+https://cashback-dealer.herokuapp.com/login/  
+https://cashback-dealer.herokuapp.com/api/purchase/  
+https://cashback-dealer.herokuapp.com/api/acumulated-cashback/  
 
