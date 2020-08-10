@@ -1,5 +1,6 @@
 import requests
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.http import QueryDict
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import NotAcceptable, ValidationError
@@ -12,6 +13,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from core.models import Dealer, Purchase
 from core.serializers import DealerSerializer, PurchaseSerializer
+from core.validators import validate_cpf
 
 
 class DealerRegisterViewSet(GenericViewSet, CreateModelMixin):
@@ -30,10 +32,32 @@ class PurchaseViewSet(viewsets.ModelViewSet):
     queryset = Purchase.objects.all()
 
     def perform_create(self, serializer):
-        data = self.request.POST.copy()
-        data['cpf'] = self.request.user.dealer.cpf
+        # import pdb
+        # pdb.set_trace()
+
+        if not self.request.user.is_superuser:
+            data = self.request.data.copy()
+            data['cpf'] = self.request.user.dealer.cpf
+        else:
+            if 'cpf' not in self.request.data:
+                raise NotAcceptable(detail="Informe um CPF!")
+            try:
+                is_valid_cpf = validate_cpf(self.request.data.get('cpf'))
+            except Exception as error:
+                print(self.request.data)
+                raise Exception(error)
+            data = self.request.data
+
+        # trick for test
+        if isinstance(data, QueryDict):
+            data = data.dict()
+
         if serializer.is_valid():
-            serializer.create(data.dict())
+            try:
+                serializer.create(data)
+            except ObjectDoesNotExist:
+                raise ValidationError(detail="Revendedor Não cadastrado", code=400)
+
             return True
 
         return False

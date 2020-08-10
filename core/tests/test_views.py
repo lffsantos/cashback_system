@@ -42,11 +42,28 @@ class RestApiTest(TestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    # Cadastro de compra
+    # Cadastro de compra com usuário revendedor
     def test_create_purchase_valid(self):
         url = reverse('core:purchase-list')
         auth = f'JWT {self.token}'
         data = {
+            "purchase_code": "code 1",
+            "value": 900,
+            'purchase_at': str(datetime.date.today()),
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    # Cadastro de compra com usuário admin
+    def test_create_purchase_valid(self):
+        self.user = baker.make('CashBackUser', email="testex@gmail.com", is_superuser=True)
+        self.jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        self.jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        payload = self.jwt_payload_handler(self.user)
+        auth = f'JWT {self.jwt_encode_handler(payload)}'
+        url = reverse('core:purchase-list')
+        data = {
+            "cpf": "25020115070",
             "purchase_code": "code 1",
             "value": 900,
             'purchase_at': str(datetime.date.today()),
