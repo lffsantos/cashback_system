@@ -32,20 +32,16 @@ class PurchaseViewSet(viewsets.ModelViewSet):
     queryset = Purchase.objects.all()
 
     def perform_create(self, serializer):
-        # import pdb
-        # pdb.set_trace()
-
         if not self.request.user.is_superuser:
             data = self.request.data.copy()
             data['cpf'] = self.request.user.dealer.cpf
         else:
             if 'cpf' not in self.request.data:
-                raise NotAcceptable(detail="Informe um CPF!")
+                raise ValidationError(detail="Informe um CPF!", code=400)
             try:
                 is_valid_cpf = validate_cpf(self.request.data.get('cpf'))
             except Exception as error:
-                print(self.request.data)
-                raise Exception(error)
+                raise ValidationError(detail=error, code=400)
             data = self.request.data
 
         # trick for test

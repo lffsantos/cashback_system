@@ -1,5 +1,4 @@
 import datetime
-import json
 from unittest import TestCase
 
 import pytest
@@ -55,7 +54,7 @@ class RestApiTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     # Cadastro de compra com usuário admin
-    def test_create_purchase_valid(self):
+    def test_create_purchase_valid_admin(self):
         self.user = baker.make('CashBackUser', email="testex@gmail.com", is_superuser=True)
         self.jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
         self.jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -70,6 +69,56 @@ class RestApiTest(TestCase):
         }
         response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    # Cadastro de compra com usuário admin sem cpf
+    def test_create_purchase_no_cpf_admin(self):
+        self.user = baker.make('CashBackUser', email="testex@gmail.com", is_superuser=True)
+        self.jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        self.jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        payload = self.jwt_payload_handler(self.user)
+        auth = f'JWT {self.jwt_encode_handler(payload)}'
+        url = reverse('core:purchase-list')
+        data = {
+            "purchase_code": "code 1",
+            "value": 900,
+            'purchase_at': str(datetime.date.today()),
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    # Cadastro de compra com usuário admin cpf invalido
+    def test_create_purchase_invalid_cpf_admin(self):
+        self.user = baker.make('CashBackUser', email="testex@gmail.com", is_superuser=True)
+        self.jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        self.jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        payload = self.jwt_payload_handler(self.user)
+        auth = f'JWT {self.jwt_encode_handler(payload)}'
+        url = reverse('core:purchase-list')
+        data = {
+            "cpf": "25020115011",
+            "purchase_code": "code 1",
+            "value": 900,
+            'purchase_at': str(datetime.date.today()),
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    # Cadastro de compra com usuário admin cpf não cadastrado
+    def test_create_purchase_no_cpf_dealer_admin(self):
+        self.user = baker.make('CashBackUser', email="testex@gmail.com", is_superuser=True)
+        self.jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        self.jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        payload = self.jwt_payload_handler(self.user)
+        auth = f'JWT {self.jwt_encode_handler(payload)}'
+        url = reverse('core:purchase-list')
+        data = {
+            "cpf": "17890466021",
+            "purchase_code": "code 1",
+            "value": 900,
+            'purchase_at': str(datetime.date.today()),
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     # Cadastrar uma compra de compra faltando 'purchase_code'
     def test_create_purchase_missing_purchase_code(self):

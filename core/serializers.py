@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from cashback_system.settings import APRROVED_CPFS
 from core.models import Dealer, Purchase
-from core.validators import validate_cpf
 
 
 class DealerSerializer(serializers.ModelSerializer):
@@ -20,10 +19,9 @@ class DealerSerializer(serializers.ModelSerializer):
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
-    status = serializers.CharField(
-        source='get_status_display',
-        read_only=True
-    )
+    status = serializers.CharField(source='get_status_display', read_only=True)
+    cashback_percentage = serializers.CharField(source='cashback.cashback_percentage', read_only=True)
+    cashback_value = serializers.CharField(source='cashback.cashback_value', read_only=True)
 
     def create(self, validated_data):
         cpf = validated_data.pop('cpf')
