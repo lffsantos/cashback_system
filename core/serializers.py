@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from cashback_system.settings import APRROVED_CPFS
-from core.models import Dealer, Purchase
+from core.models import Dealer, Purchase, CachbackPurchase
 
 
 class DealerSerializer(serializers.ModelSerializer):

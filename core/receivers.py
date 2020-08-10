@@ -18,15 +18,15 @@ def get_percent_cashback(value):
 
 
 def update_cashback_dealer_handler(sender, instance, created, **kwargs):
-    from core.models import Purchase, CachbackPurcharse
+    from core.models import Purchase, CachbackPurchase
     actual_date = timezone.now()
     year, month = actual_date.year, actual_date.month
-    purcharses = Purchase.objects.filter(dealer=instance.dealer, purchase_at__month=month, purchase_at__year=year)
-    value = purcharses.aggregate(Sum('value')).get('value__sum')
+    purchases = Purchase.objects.filter(dealer=instance.dealer, purchase_at__month=month, purchase_at__year=year)
+    value = purchases.aggregate(Sum('value')).get('value__sum')
     cashback_percent = get_percent_cashback(value)
-    for p in purcharses:
-        CachbackPurcharse.objects.update_or_create(
-            purcharse=p,
+    for p in purchases:
+        CachbackPurchase.objects.update_or_create(
+            purchase=p,
             defaults={
                 "cashback_percentage": cashback_percent,
                 "cashback_value": (p.value * cashback_percent) / 100

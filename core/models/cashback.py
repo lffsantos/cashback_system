@@ -14,13 +14,13 @@ class CashbackRange(models.Model):
         ordering = ['min']
 
 
-class CachbackPurcharse(models.Model):
-    purcharse = models.OneToOneField('Purchase', models.PROTECT, related_name='cashback')
+class CachbackPurchase(models.Model):
+    purchase = models.OneToOneField('Purchase', models.PROTECT, related_name='cashback')
     cashback_percentage = models.DecimalField('Percentual do cashback', max_digits=12, decimal_places=2, default=0)
     cashback_value = models.DecimalField(verbose_name='Valor do Cashback', max_digits=12, decimal_places=2, default=0)
 
     def __str__(self):
-        return f'{self.purcharse}'
+        return f'{self.purchase}'
 
     class Meta:
         verbose_name = 'Cashback Compra'

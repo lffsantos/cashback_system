@@ -45,7 +45,8 @@ class PurchaseSerializerTest(TestCase):
             'value': '1200.00',
             'purchase_at': str(datetime.date.today()),
             'status': 'Em validação',
-            'cashback_percentage': '15.00', 'cashback_value': '180.00'}
+            'cashback_percentage': '15.00', 'cashback_value': '180.00'
+        }
 
         self.assertEqual(PurchaseSerializer(instance).data, expected)
 
@@ -64,5 +65,6 @@ class PurchaseSerializerTest(TestCase):
             'value': '1000.00',
             'purchase_at': str(datetime.date.today()),
             'status': 'Aprovado',
-            'cashback_percentage': '10.00', 'cashback_value': '100.00'}
+            'cashback_percentage': '10.00', 'cashback_value': '100.00'
+        }
         self.assertEqual(PurchaseSerializer(instance).data, expected)

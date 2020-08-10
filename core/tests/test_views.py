@@ -120,17 +120,6 @@ class RestApiTest(TestCase):
         response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # Cadastrar uma compra de compra faltando 'purchase_code'
-    def test_create_purchase_missing_purchase_code(self):
-        url = reverse('core:purchase-list')
-        auth = f'JWT {self.token}'
-        data = {
-            "value": 900,
-            'purchase_at': str(datetime.date.today()),
-        }
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
     # Lista todas as compras quando o usuário autenticado é admin
     def test_list_purchase_admin_user(self):
         self.dealer1 = baker.make('Dealer', cpf='55320468083')
@@ -156,6 +145,18 @@ class RestApiTest(TestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+
+    # Cadastrar uma compra de compra faltando 'purchase_code'
+    def test_create_purchase_missing_purchase_code(self):
+        url = reverse('core:purchase-list')
+        auth = f'JWT {self.token}'
+        data = {
+            "value": 900,
+            'purchase_at': str(datetime.date.today()),
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     # Cashback acumulado
     def test_get_acumulated_cashback(self):
