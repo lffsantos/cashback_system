@@ -1,1 +1,1 @@
-web: gunicorn cashback_system.wsgi --log-file -
+web: gunicor cashback_system.wsgi --log-file -
