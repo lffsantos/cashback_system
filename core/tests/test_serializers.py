@@ -28,9 +28,11 @@ class DealerSerializerTest(TestCase):
 
 
 class PurchaseSerializerTest(TestCase):
+    fixtures = ['cashbackrange.json', ]
+
     def test_create_purchase(self):
         self.dealer = baker.make('Dealer', cpf='55320468083')
-        payload = {"purchase_code": "code1", "value": 1000, "cpf": '55320468083'}
+        payload = {"purchase_code": "code1", "value": 1200, "cpf": '55320468083'}
         client = Client()
         response = client.get("")
         request = response.wsgi_request
@@ -40,10 +42,11 @@ class PurchaseSerializerTest(TestCase):
         instance = serializer.create(payload)
         expected = {
             'purchase_code': 'code1',
-            'value': '1000.00',
+            'value': '1200.00',
             'purchase_at': str(datetime.date.today()),
             'status': 'Em validação',
-            'cashback_percentage': '0.00', 'cashback_value': '0.00'}
+            'cashback_percentage': '15.00', 'cashback_value': '180.00'}
+
         self.assertEqual(PurchaseSerializer(instance).data, expected)
 
     def test_create_purchase_approve_cpf(self):
@@ -61,5 +64,5 @@ class PurchaseSerializerTest(TestCase):
             'value': '1000.00',
             'purchase_at': str(datetime.date.today()),
             'status': 'Aprovado',
-            'cashback_percentage': '0.00', 'cashback_value': '0.00'}
+            'cashback_percentage': '10.00', 'cashback_value': '100.00'}
         self.assertEqual(PurchaseSerializer(instance).data, expected)
