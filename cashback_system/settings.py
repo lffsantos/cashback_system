@@ -147,4 +147,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-APRROVED_CPFS = config('APRROVED_CPFS', default=['15350946056'], cast=Csv())
+
+APRROVED_CPFS = ['15350946056']
