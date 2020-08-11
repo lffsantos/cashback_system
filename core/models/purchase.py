@@ -1,6 +1,9 @@
 import datetime
 
 from django.db import models
+from django.db.models.signals import post_save
+
+from core.receivers import update_cashback_dealer_handler
 
 
 class Purchase(models.Model):
@@ -26,3 +29,6 @@ class Purchase(models.Model):
         verbose_name = 'Compra'
         verbose_name_plural = 'Compras'
         ordering = ['purchase_at']
+
+
+post_save.connect(update_cashback_dealer_handler, sender=Purchase)
