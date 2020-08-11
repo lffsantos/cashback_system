@@ -10,3 +10,6 @@ development:
 
 loaddata:
 	python manage.py loaddata cashbackrange
+
+test:
+	pytest

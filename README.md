@@ -22,6 +22,12 @@ Criar/Ativar o ambiente virtual.
 Carregando dados
 > make loaddata
 
+Executar
+> make development
+
+
+## Testes:
+> make test
 
 ## Descrição da API - REST:
 [Documentação da API](https://documenter.getpostman.com/view/998888/T1LJm9QG?version=latest)
